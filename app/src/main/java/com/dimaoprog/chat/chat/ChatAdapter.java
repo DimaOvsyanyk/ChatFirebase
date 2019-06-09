@@ -1,0 +1,76 @@
+package com.dimaoprog.chat.chat;
+
+import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
+import com.dimaoprog.chat.R;
+import com.dimaoprog.chat.databinding.ItemMessageInBinding;
+import com.dimaoprog.chat.databinding.ItemMessageOutBinding;
+import com.dimaoprog.chat.entity.Message;
+
+import java.util.List;
+
+public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private List<Message> messageList;
+    private String currentUserName;
+    private static final int IN_MESSAGE = 0;
+    private static final int OUT_MESSAGE = 1;
+
+    public ChatAdapter(List<Message> messageList, String currentUserName) {
+        this.messageList = messageList;
+        this.currentUserName = currentUserName;
+    }
+
+    public void setCurrentUserName(String currentUserName) {
+        this.currentUserName = currentUserName;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (messageList.get(position).getAuthor().equals(currentUserName)) {
+            return OUT_MESSAGE;
+        } else {
+            return IN_MESSAGE;
+        }
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        if (i == IN_MESSAGE) {
+            ItemMessageInBinding bindingIn = DataBindingUtil.inflate(LayoutInflater.from(viewGroup.getContext()), R.layout.item_message_in, viewGroup, false);
+            return new ChatInViewHolder(bindingIn);
+        } else {
+            ItemMessageOutBinding bindingOut = DataBindingUtil.inflate(LayoutInflater.from(viewGroup.getContext()), R.layout.item_message_out, viewGroup, false);
+            return new ChatOutViewHolder(bindingOut);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+        switch (viewHolder.getItemViewType()) {
+            case IN_MESSAGE:
+                ChatInViewHolder holderIn = (ChatInViewHolder) viewHolder;
+                holderIn.bindView(messageList.get(i));
+                break;
+            case OUT_MESSAGE:
+                ChatOutViewHolder holderOut = (ChatOutViewHolder) viewHolder;
+                holderOut.bindView(messageList.get(i));
+                break;
+        }
+    }
+
+//    @Override
+//    public void onBindViewHolder(@NonNull ChatInViewHolder chatInViewHolder, int i) {
+//        chatInViewHolder.bindView(messageList.get(i));
+//    }
+
+    @Override
+    public int getItemCount() {
+        return messageList.size();
+    }
+}

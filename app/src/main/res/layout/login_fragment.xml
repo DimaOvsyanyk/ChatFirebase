@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="loginModel"
+            type="com.dimaoprog.chat.login.LoginViewModel" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/margin_left_right_login_page"
+            android:paddingEnd="@dimen/margin_left_right_login_page">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"
+                tools:context=".loginRegistrationViews.LoginFragment">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_l">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/et_user_name"
+                        style="@android:style/Widget.Material.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/name"
+                        android:ems="10"
+                        android:hint="@string/name"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:text="@={loginModel.userName}"
+                        tools:targetApi="o" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/et_e_mail"
+                        style="@android:style/Widget.Material.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/e_mail"
+                        android:ems="10"
+                        android:hint="@string/e_mail"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:text="@={loginModel.email}"
+                        tools:targetApi="o" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:passwordToggleEnabled="true">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/et_password"
+                        style="@android:style/Widget.Material.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/et_e_mail"
+                        android:autofillHints="@string/password"
+                        android:ems="10"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:text="@={loginModel.password}"
+                        tools:targetApi="o" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <CheckBox
+                    android:id="@+id/check_stay_in"
+                    style="@android:style/Widget.Material.CompoundButton.CheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="@string/remember_me" />
+
+                <Button
+                    android:id="@+id/btn_login"
+                    style="@android:style/Widget.Material.Button.Borderless.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_l"
+                    android:text="@string/sign_in" />
+
+                <Button
+                    android:id="@+id/btn_check_verification"
+                    style="@android:style/Widget.Material.Button.Borderless.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{loginModel.needVerification}"
+                    android:text="@string/check_e_mail_verification" />
+
+            </LinearLayout>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

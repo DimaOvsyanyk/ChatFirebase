@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="com.dimaoprog.chat.Converter" />
+        <variable
+            name="chat"
+            type="com.dimaoprog.chat.entity.Chat" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_s"
+        android:background="@drawable/shape_chat"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_m">
+
+        <TextView
+            android:id="@+id/txt_chat_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{chat.chat_title}"
+            android:textSize="22sp"
+            tools:text="@string/chat_title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_s"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_last_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:text="@{chat.last_message}"
+                android:textSize="12sp"
+                tools:text="@string/last_message" />
+
+            <TextView
+                android:id="@+id/txt_last_message_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_s"
+                android:text="@{Converter.dateToString(chat.time_stamp)}"
+                android:textSize="12sp"
+                tools:text="@string/time" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
