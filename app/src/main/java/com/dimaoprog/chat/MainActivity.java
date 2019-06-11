@@ -19,15 +19,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Sig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        auth = FirebaseAuth.getInstance();
-
-//        auth.signOut();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        checkUser();
+        if (savedInstanceState == null) {
+            auth = FirebaseAuth.getInstance();
+            checkUser();
+        } else {
+            onRestoreInstanceState(savedInstanceState);
+        }
     }
 
     @Override
