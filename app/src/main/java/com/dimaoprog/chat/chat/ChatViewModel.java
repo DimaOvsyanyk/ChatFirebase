@@ -6,9 +6,9 @@ import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.dimaoprog.chat.entity.Chat;
 import com.dimaoprog.chat.entity.Message;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,49 +28,35 @@ public class ChatViewModel extends ViewModel {
 
     private MutableLiveData<List<Message>> liveMessageList = new MutableLiveData<>();
     private ObservableField<String> newMessageText = new ObservableField<>();
-    private MutableLiveData<String> liveCurrentUserName = new MutableLiveData<>();
     private MutableLiveData<Boolean> showProgressDialog = new MutableLiveData<>();
 
     private String chatId;
     private String chatTitle;
 
-
-    private FirebaseUser currentUser;
     private String currentUserName;
     private DatabaseReference database;
 
     public ChatViewModel() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        currentUser = auth.getCurrentUser();
+        currentUserName = Objects.requireNonNull(auth.getCurrentUser()).getDisplayName();
         database = FirebaseDatabase.getInstance().getReference();
-        setUserName();
-    }
-
-    private void setUserName() {
-        database.child("users/" + currentUser.getUid() + "/user_name").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                currentUserName = Objects.requireNonNull(dataSnapshot.getValue()).toString();
-                setLiveCurrentUserName(currentUserName);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(LOG, databaseError.getMessage());
-            }
-        });
     }
 
     public void sendMessage() {
         String newMessageId = database.child("messages/" + chatId).push().getKey();
         if (getNewMessageText() != null) {
             Long time = Calendar.getInstance().getTimeInMillis();
-            Message newMessage = new Message(currentUserName, getNewMessageText().get(), time);
 
+            Message newMessage = new Message(currentUserName, getNewMessageText().get(), time);
             Map<String, Object> postMessage = new HashMap<>();
             postMessage.put("messages/" + chatId + "/" + newMessageId, newMessage.toMap());
 
+            Chat newChatInfo = new Chat(chatTitle, getNewMessageText().get(), time);
+            Map<String, Object> postNewChatInfo = new HashMap<>();
+            postNewChatInfo.put("chats/" + chatId, newChatInfo.toMap());
+
             database.updateChildren(postMessage);
+            database.updateChildren(postNewChatInfo);
             setNewMessageText(null);
             Log.d(LOG, newMessage.toString());
         } else {
@@ -113,28 +99,20 @@ public class ChatViewModel extends ViewModel {
         return liveMessageList;
     }
 
-    public void setLiveMessageList(List<Message> liveMessageList) {
+    private void setLiveMessageList(List<Message> liveMessageList) {
         this.liveMessageList.setValue(liveMessageList);
-    }
-
-    public MutableLiveData<String> getLiveCurrentUserName() {
-        return liveCurrentUserName;
-    }
-
-    public void setLiveCurrentUserName(String currentUserName) {
-        this.liveCurrentUserName.setValue(currentUserName);
     }
 
     public MutableLiveData<Boolean> getShowProgressDialog() {
         return showProgressDialog;
     }
 
-    public void setShowProgressDialog(boolean showProgressDialog) {
+    private void setShowProgressDialog(boolean showProgressDialog) {
         this.showProgressDialog.setValue(showProgressDialog);
     }
 
-    public String getChatId() {
-        return chatId;
+    public String getCurrentUserName() {
+        return currentUserName;
     }
 
     public void setChatId(String chatId) {

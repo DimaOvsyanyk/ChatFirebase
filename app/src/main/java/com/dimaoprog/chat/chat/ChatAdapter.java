@@ -38,10 +38,6 @@ public class ChatAdapter extends ListAdapter<Message, RecyclerView.ViewHolder> {
         }
     };
 
-    public void setCurrentUserName(String currentUserName) {
-        this.currentUserName = currentUserName;
-    }
-
     @Override
     public int getItemViewType(int position) {
         if (getItem(position).getAuthor().equals(currentUserName)) {

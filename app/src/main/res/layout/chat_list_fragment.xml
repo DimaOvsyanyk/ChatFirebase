@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout>
 
-    <android.support.design.widget.CoordinatorLayout
+    <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/padding_s"
-        tools:context=".chatList.ChatListFragment">
+        android:padding="@dimen/padding_s">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_chats"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_add_chat"
@@ -20,8 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/margin_xs"
-            app:layout_behavior="android.support.design.behavior.HideBottomViewOnScrollBehavior"
-            android:src="@drawable/ic_add_blue_72dp"/>
+            android:src="@drawable/ic_add_blue_72dp" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </FrameLayout>
 </layout>

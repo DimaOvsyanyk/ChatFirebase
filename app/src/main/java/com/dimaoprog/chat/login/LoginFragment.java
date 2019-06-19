@@ -1,38 +1,32 @@
 package com.dimaoprog.chat.login;
 
-import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.dimaoprog.chat.MyProgressDialog;
 import com.dimaoprog.chat.R;
 import com.dimaoprog.chat.databinding.LoginFragmentBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.dimaoprog.chat.databinding.UserNameDialogBinding;
 
 import java.util.Objects;
-
-import static com.dimaoprog.chat.Constants.LOG;
 
 public class LoginFragment extends Fragment {
 
     private LoginViewModel lViewModel;
     private LoginFragmentBinding binding;
-    private ProgressDialog progressDialog;
-
-    private FirebaseAuth auth;
+    private UserNameDialogBinding dialogBinding;
     private SignInListener signInListener;
-    private DatabaseReference database;
+    private MyProgressDialog progressDialog;
+    private AlertDialog userNameDialog;
 
     public interface SignInListener {
         void checkUser();
@@ -43,9 +37,7 @@ public class LoginFragment extends Fragment {
     }
 
     public static LoginFragment newInstance(SignInListener signInListener) {
-
         Bundle args = new Bundle();
-
         LoginFragment fragment = new LoginFragment();
         fragment.setArguments(args);
         fragment.setSignInListener(signInListener);
@@ -56,103 +48,54 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         lViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
-        auth = FirebaseAuth.getInstance();
+
+        if (savedInstanceState == null) {
+            lViewModel.setSignInListener(signInListener);
+        }
         binding = DataBindingUtil.inflate(inflater, R.layout.login_fragment, container, false);
         binding.setLoginModel(lViewModel);
+        progressDialog = new MyProgressDialog(getContext());
+        subscribeLiveDataObservers();
 
-        lViewModel.getUserNameOk().observe(this, aBoolean -> binding.etUserName.setError(aBoolean ? null : "enter your name"));
-        lViewModel.getEmailOk().observe(this, aBoolean -> binding.etEMail.setError(aBoolean ? null : "invalid e-mail"));
-        lViewModel.getPasswordOk().observe(this, bBoolean -> binding.etPassword.setError(bBoolean ? null : "invalid password"));
-
-        binding.btnLogin.setOnClickListener(__ -> signIn());
-        binding.btnCheckVerification.setOnClickListener(__ -> checkVerification());
-
-        database = FirebaseDatabase.getInstance().getReference();
-        setupProgressDialog();
         return binding.getRoot();
     }
 
-    private void checkVerification() {
-        if (auth.getCurrentUser() != null) {
-            auth.getCurrentUser().reload().addOnCompleteListener(__ -> {
-                lViewModel.setNeedVerification(!auth.getCurrentUser().isEmailVerified());
-                if (auth.getCurrentUser().isEmailVerified()) {
-                    Toast.makeText(getContext(), "E-mail verified", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+    private void subscribeLiveDataObservers() {
+        lViewModel.getToastMessage().observe(getViewLifecycleOwner(), text -> showToast(text));
+        lViewModel.getShowProgressDialog().observe(getViewLifecycleOwner(), show -> progressDialog.showMyProgressDialog(show));
+        lViewModel.getEmailOk().observe(getViewLifecycleOwner(), ok -> binding.etEMail.setError(ok ? null : "invalid e-mail"));
+        lViewModel.getPasswordOk().observe(getViewLifecycleOwner(), ok -> binding.etPassword.setError(ok ? null : "invalid password"));
+        lViewModel.getNeedUserName().observe(getViewLifecycleOwner(), needName -> showUserNameDialog(needName));
+        lViewModel.getUserNameOk().observe(getViewLifecycleOwner(), ok -> dialogBinding.etUserName.setError(ok ? null : "very short name"));
     }
 
-    private void showProgressDialog(boolean show) {
-        if (show) {
-            progressDialog.show();
+    private void showUserNameDialog(boolean needName) {
+        if (needName) {
+            if (userNameDialog != null) {
+                userNameDialog.show();
+            } else {
+                buildUserDialog();
+            }
         } else {
-            progressDialog.dismiss();
+            userNameDialog.dismiss();
         }
     }
 
-    private void setupProgressDialog() {
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setTitle("Checking......");
-        progressDialog.setMessage("Please wait");
+    private void buildUserDialog() {
+        dialogBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()),
+                R.layout.user_name_dialog, null, false);
+        dialogBinding.setLoginModel(lViewModel);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+                .setView(dialogBinding.getRoot())
+                .setCancelable(false)
+                .setTitle("You are not registered, enter your name")
+                .setPositiveButton("OK", (dialog, which) -> lViewModel.createAccount())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+        userNameDialog = dialogBuilder.create();
+        userNameDialog.show();
     }
 
-    private void createAccount() {
-        Log.d(LOG, "createAccount:" + lViewModel.getEmail());
-        if (lViewModel.inputFalse()) {
-            return;
-        }
-        showProgressDialog(true);
-        auth.createUserWithEmailAndPassword(lViewModel.getEmail(), lViewModel.getPassword())
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
-                    if (task.isSuccessful()) {
-                        sendEmailVerification(auth.getCurrentUser());
-                        database.child("users").child(Objects.requireNonNull(auth.getCurrentUser()).getUid()).child("user_name").setValue(lViewModel.getUserName());
-                        Log.d(LOG, "createUserWithEmail:success" + Objects.requireNonNull(auth.getCurrentUser()).getUid());
-                    } else {
-                        Log.w(LOG, "createUserWithEmail:failure", task.getException());
-                        Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
-                    }
-                    showProgressDialog(false);
-                });
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
-
-    private void sendEmailVerification(FirebaseUser newUser) {
-        Objects.requireNonNull(newUser).sendEmailVerification()
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Verification email sent to " + newUser.getEmail(), Toast.LENGTH_SHORT).show();
-                        lViewModel.setNeedVerification(true);
-                        Log.d(LOG, "setNeedVerification=true");
-                    } else {
-                        Log.e(LOG, "sendEmailVerification", task.getException());
-                        Toast.makeText(getContext(), "Failed to send verification email.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void signIn() {
-        Log.d(LOG, "signIn:" + lViewModel.getEmail());
-        if (lViewModel.inputFalse()) {
-            return;
-        }
-        showProgressDialog(true);
-        auth.signInWithEmailAndPassword(lViewModel.getEmail(), lViewModel.getPassword())
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(LOG, "signInWithEmail:success");
-                        if (Objects.requireNonNull(auth.getCurrentUser()).isEmailVerified()) {
-                            signInListener.checkUser();
-                        } else {
-                            lViewModel.setNeedVerification(true);
-                            Log.d(LOG, "setNeedVerification=true");
-                        }
-                    } else {
-                        Log.w(LOG, "signInWithEmail:failure", task.getException());
-                        createAccount();
-                    }
-                    showProgressDialog(false);
-                });
-    }
-
 }

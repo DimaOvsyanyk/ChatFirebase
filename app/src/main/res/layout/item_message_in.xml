@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,7 +11,7 @@
             type="com.dimaoprog.chat.entity.Message" />
     </data>
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_s">
@@ -18,50 +19,46 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_message"
             android:layout_gravity="start"
             android:layout_marginEnd="@dimen/margin_message"
+            android:background="@drawable/shape_message"
             android:orientation="vertical"
-            android:paddingTop="@dimen/padding_xs"
-            android:paddingBottom="@dimen/padding_xs"
             android:paddingStart="@dimen/padding_m"
-            android:paddingEnd="@dimen/padding_m">
+            android:paddingTop="@dimen/padding_xs"
+            android:paddingEnd="@dimen/padding_m"
+            android:paddingBottom="@dimen/padding_xs">
+
 
             <TextView
-                android:id="@+id/txt_message"
+                android:id="@+id/txt_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end"
+                android:text="@{message.author}"
+                android:textColor="@color/textIn"
+                android:textSize="10sp"
+                tools:text="@string/user_name" />
+
+            <TextView
+                android:id="@+id/txt_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
                 android:text="@{message.message}"
+                android:textColor="@color/textIn"
                 android:textSize="18sp"
                 tools:text="@string/text_message" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/txt_message_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/txt_message_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin_m"
-                    android:text="@{Converter.dateToString(message.time_stamp)}"
-                    android:textSize="8sp"
-                    tools:text="@string/time" />
-
-                <TextView
-                    android:id="@+id/txt_user_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:text="@{message.author}"
-                    android:textSize="10sp"
-                    tools:text="@string/user_name" />
-
-            </LinearLayout>
-
+                android:layout_marginEnd="@dimen/margin_m"
+                android:gravity="start"
+                android:text="@{Converter.dateToStringForMessages(message.time_stamp)}"
+                android:textColor="@color/textIn"
+                android:textSize="8sp"
+                tools:text="@string/time" />
 
         </LinearLayout>
     </FrameLayout>

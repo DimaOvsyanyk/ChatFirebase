@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="chatViewModel"
             type="com.dimaoprog.chat.chat.ChatViewModel" />
@@ -10,8 +12,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:fitsSystemWindows="true"
+        android:orientation="vertical"
         tools:context=".chat.ChatFragment">
 
         <android.support.v7.widget.RecyclerView
@@ -19,26 +21,26 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingTop="@dimen/padding_xs"
             android:paddingStart="@dimen/padding_m"
-            android:paddingEnd="@dimen/padding_m"/>
+            android:paddingTop="@dimen/padding_xs"
+            android:paddingEnd="@dimen/padding_m" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding_s"
-            android:background="@color/colorPrimary">
+            android:background="@drawable/input_layout"
+            android:padding="@dimen/padding_s">
 
             <EditText
                 android:id="@+id/et_message"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="textMultiLine"
-                android:background="@android:color/white"
-                android:padding="@dimen/margin_xs"
-                android:hint="@string/type_message_here"
                 android:autofillHints="@string/type_message_here"
+                android:background="@android:color/white"
+                android:hint="@string/type_message_here"
+                android:inputType="textMultiLine"
+                android:padding="@dimen/margin_xs"
                 android:text="@={chatViewModel.newMessageText}"
                 tools:targetApi="o" />
 
@@ -47,9 +49,10 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="@{() -> chatViewModel.sendMessage()}"
                 android:layout_marginStart="@dimen/margin_xs"
                 android:layout_marginEnd="@dimen/margin_xs"
-                android:text="@string/send"/>
+                android:text="@string/send" />
 
         </LinearLayout>
 

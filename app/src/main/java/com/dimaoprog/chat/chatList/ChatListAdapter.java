@@ -20,7 +20,7 @@ public class ChatListAdapter extends ListAdapter<Chat, ChatListViewHolder> {
         this.chatPickedListener = chatPickedListener;
     }
 
-    public interface ChatPickedListener{
+    public interface ChatPickedListener {
         void openChatFragment(String chatId, String chatTitle);
     }
 
@@ -49,5 +49,10 @@ public class ChatListAdapter extends ListAdapter<Chat, ChatListViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ChatListViewHolder chatListViewHolder, int i) {
         chatListViewHolder.bindView(getItem(i), chatPickedListener);
+    }
+
+    @Override
+    protected Chat getItem(int position) {
+        return super.getItem(position);
     }
 }

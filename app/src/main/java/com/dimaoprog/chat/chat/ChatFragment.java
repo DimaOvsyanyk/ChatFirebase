@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.dimaoprog.chat.MyProgressDialog;
 import com.dimaoprog.chat.R;
@@ -42,21 +41,18 @@ public class ChatFragment extends Fragment {
         cViewModel.setChatTitle(Objects.requireNonNull(getArguments()).getString(CHAT_TITLE));
         setTitle(cViewModel.getChatTitle());
         MyProgressDialog progressDialog = new MyProgressDialog(getContext());
-        cViewModel.getShowProgressDialog().observe(this, show -> progressDialog.showMyProgressDialog(show));
+        cViewModel.getShowProgressDialog().observe(getViewLifecycleOwner(), show -> progressDialog.showMyProgressDialog(show));
         cViewModel.getMessagesFromDB();
         binding = DataBindingUtil.inflate(inflater, R.layout.chat_fragment, container, false);
         binding.setChatViewModel(cViewModel);
-        binding.btnSend.setOnClickListener(__ -> cViewModel.sendMessage());
 
-        adapter = new ChatAdapter(cViewModel.getLiveCurrentUserName().getValue());
+        adapter = new ChatAdapter(cViewModel.getCurrentUserName());
         binding.rvMessages.setAdapter(adapter);
         binding.rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
         cViewModel.getLiveMessageList().observe(this, messages -> {
             adapter.submitList(messages);
             scrollToLastMessage();
         });
-        cViewModel.getLiveCurrentUserName().observe(this, name -> adapter.setCurrentUserName(name));
-
         return binding.getRoot();
     }
 
@@ -65,8 +61,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void scrollToLastMessage() {
-        binding.rvMessages.scrollToPosition(adapter.getItemCount());
-        adapter.notifyDataSetChanged();
+        binding.rvMessages.scrollToPosition(adapter.getItemCount() - 1);
     }
 
 }
