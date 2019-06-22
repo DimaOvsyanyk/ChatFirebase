@@ -127,7 +127,7 @@ public class LoginViewModel extends ViewModel {
         return email.matches(emailPattern);
     }
 
-    public boolean setPasswordOk() {
+    private boolean setPasswordOk() {
         this.passwordOk.setValue(password.length() > 5);
         return password.length() > 5;
     }
@@ -144,7 +144,7 @@ public class LoginViewModel extends ViewModel {
         return userNameOk;
     }
 
-    public boolean setUserNameOk() {
+    private boolean setUserNameOk() {
         this.userNameOk.setValue(userName.length() > 3);
         return userName.length() > 3;
     }
@@ -153,7 +153,7 @@ public class LoginViewModel extends ViewModel {
         return needVerification;
     }
 
-    public void setNeedVerification(boolean needVerification) {
+    private void setNeedVerification(boolean needVerification) {
         this.needVerification.set(needVerification);
     }
 
@@ -161,7 +161,7 @@ public class LoginViewModel extends ViewModel {
         return showProgressDialog;
     }
 
-    public void setShowProgressDialog(boolean showProgressDialog) {
+    private void setShowProgressDialog(boolean showProgressDialog) {
         this.showProgressDialog.setValue(showProgressDialog);
     }
 
@@ -169,7 +169,7 @@ public class LoginViewModel extends ViewModel {
         return toastMessage;
     }
 
-    public void setToastMessage(String toastMessage) {
+    private void setToastMessage(String toastMessage) {
         this.toastMessage.setValue(toastMessage);
     }
 
@@ -197,7 +197,7 @@ public class LoginViewModel extends ViewModel {
         return needUserName;
     }
 
-    public void setNeedUserName(boolean needUserName) {
+    private void setNeedUserName(boolean needUserName) {
         this.needUserName.setValue(needUserName);
     }
 }

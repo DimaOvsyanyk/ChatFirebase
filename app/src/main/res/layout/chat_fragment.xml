@@ -44,14 +44,24 @@
                 android:text="@={chatViewModel.newMessageText}"
                 tools:targetApi="o" />
 
+            <ImageButton
+                android:id="@+id/btn_voice_to_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/margin_s"
+                android:layout_marginTop="@dimen/margin_xs"
+                android:layout_marginBottom="@dimen/margin_xs"
+                android:background="@android:color/white"
+                android:contentDescription="@string/voice"
+                android:src="@drawable/ic_mic_orange_24dp" />
+
             <Button
-                android:id="@+id/btn_send"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="@{() -> chatViewModel.sendMessage()}"
                 android:layout_marginStart="@dimen/margin_xs"
                 android:layout_marginEnd="@dimen/margin_xs"
+                android:onClick="@{() -> chatViewModel.sendMessage()}"
                 android:text="@string/send" />
 
         </LinearLayout>

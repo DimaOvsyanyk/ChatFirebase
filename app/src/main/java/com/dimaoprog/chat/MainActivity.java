@@ -13,12 +13,19 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity implements LoginFragment.SignInListener, ChatListAdapter.ChatPickedListener {
 
     private FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+//        authStateListener = firebaseAuth -> {
+//            currentUser = firebaseAuth.getCurrentUser();
+//            checkUser();
+//        };
         if (savedInstanceState == null) {
 //            auth.signOut();
             checkUser();
@@ -26,9 +33,22 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Sig
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+//        auth.addAuthStateListener(authStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        if (authStateListener != null) {
+//            auth.removeAuthStateListener(authStateListener);
+//        }
+    }
+
+    @Override
     public void checkUser() {
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser != null) {
+        if (currentUser != null && currentUser.isEmailVerified()) {
             openChatListFragment();
         } else {
             openLoginFragment();

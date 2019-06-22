@@ -66,5 +66,6 @@
     <string name="name">Name</string>
     <string name="yes">YES</string>
     <string name="cancel">CANCEL</string>
+    <string name="voice">voice</string>
 
 </resources>

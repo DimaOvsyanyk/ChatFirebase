@@ -76,8 +76,8 @@ public class ChatListViewModel extends ViewModel {
                         chatList.add(tempChat);
                     }
                 }
-                setLiveChatList(chatList);
                 setShowProgressDialog(false);
+                setLiveChatList(chatList);
             }
 
             @Override
